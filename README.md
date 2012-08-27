@@ -70,3 +70,7 @@ So in Maven profile (`.m2/settings.xml`), you can defined properties in followin
 These two kind of profile properties define space-separated values, plain dependencies for `my.deps.` prefixed one (here `my.deps.xxx`), EAR module specifications for for `my.mods.` one (here `my.mods.xxx`).
 
 For EAR module injection, `moduleType` part of module specification is the type of included module, like `ejb`, `java` or `web`. The `entryName` is used to customized the module filename. When module is `web` one, specification is ended by context path (here `/`).
+
+## Documentation
+
+More documentation can be found [here](http://cchantep.github.com/maven-profiledep-plugin/).
