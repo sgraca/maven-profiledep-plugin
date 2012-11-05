@@ -1,35 +1,26 @@
 package mojo;
 
-import java.io.StringReader;
-
-import java.util.StringTokenizer;
-import java.util.Properties;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import java.lang.reflect.Method;
-
-import org.apache.maven.plugin.logging.Log;
 
 import org.apache.maven.model.Plugin;
-
-import org.apache.maven.project.MavenProject;
-
-import org.apache.maven.profiles.Profile;
-
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.AbstractMojo;
-
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import java.io.StringReader;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
- * Profile EAR module injection. 
- * Injects dependencies from profile properties. Gets profile properties matching given prefix, then parses those properties. Format used in those properties to define module is groupId:artifactId:earModuleType:uri[:contextRoot] (contextRoot is only required for web module). 
+ * Profile EAR module injection.
+ * Injects dependencies from profile properties. Gets profile properties matching given prefix, then parses those properties. Format used in those properties to define module is groupId:artifactId:earModuleType[:contextRoot] (contextRoot is only required for web module).
  * earModuleType part must correspond to a configuration element name for maven-ear-plugin. To use a war artifact as module, earModuleType will be webModule as it is the way it would be defined in plain EAR configuration.
  * Each property can define one or more modules, module strings being separated by space (' ').
- * Relies on maven-ear-plugin, so that injected modules are then treated 
+ * Relies on maven-ear-plugin, so that injected modules are then treated
  * as those specified in pom.xml in the usage way. As usually defined EAR modules, for each of them a matching dependency must be found by maven-ear-plugin (either statically or injected dependency).
  *
  * @author Cedric Chantepie
@@ -98,7 +89,7 @@ public class ProfileEarModuleMojo extends AbstractMojo {
     /**
      * {@inheritDoc}
      */
-    public void execute() 
+    public void execute()
 	throws MojoExecutionException {
 
 	Log log = getLog();
@@ -177,7 +168,7 @@ public class ProfileEarModuleMojo extends AbstractMojo {
 	    try {
 		props = (Properties) getProps.
 		    invoke(profile, new Object[0]);
-	    
+
 	    } catch (Exception e) {
 		throw new MojoExecutionException("Fails to get profile properties", e);
 	    } // end of catch
@@ -185,7 +176,7 @@ public class ProfileEarModuleMojo extends AbstractMojo {
 	    // ---
 
 	    log.debug("properties = " + props);
-	    
+
 	    for (Object key : props.keySet()) {
 		log.debug("property key = " + key);
 
@@ -197,9 +188,9 @@ public class ProfileEarModuleMojo extends AbstractMojo {
 
 		value = props.getProperty((String) key);
 
-		log.debug("Find matching property: " + 
+		log.debug("Find matching property: " +
 			  key + " = " + value);
-		
+
 		vtok = new StringTokenizer(value, " ");
 
 		while (vtok.hasMoreTokens()) {
@@ -232,16 +223,7 @@ public class ProfileEarModuleMojo extends AbstractMojo {
 			case 2: // module type
 			    type = ptok.nextToken();
 
-			    break;
-			case 3: // uri
-			    moduleConfigXml.
-				append("<uri>").
-				append(ptok.nextToken()).
-				append("</uri>");
-
-			    break;
-
-			case 4: // context root (only for web module)
+			case 3: // context root (only for web module)
 			    moduleConfigXml.
 				append("<contextRoot>").
 				append(ptok.nextToken()).
@@ -274,14 +256,14 @@ public class ProfileEarModuleMojo extends AbstractMojo {
 			    build(new StringReader(moduleConfigXml.toString()));
 
 			log.debug("module config = " + moduleConfig);
-		    } catch (Exception e) { 
+		    } catch (Exception e) {
 			e.printStackTrace();
 		    }
 
 		    if (moduleConfig == null) {
 			log.error("Fails to create module configuration");
 			log.debug("module config XML = " + moduleConfigXml);
-			
+
 			continue;
 		    } // end of if
 
